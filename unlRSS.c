@@ -11,79 +11,103 @@
 #include <libxml/tree.h>
 
 #define HTTP_PORT 80
-#define DIRSIZE   100000
+#define DIRSIZE   50000
+
+typedef struct {
+  char *name;
+  char *host;
+  char *resource;
+} RssService;
+
+static const RssService unlNews = {
+  "UNL News",
+  "newsroom.unl.edu",
+  "/releases/?format=xml"
+};
+
+static const RssService huskerNews = {
+  "Husker Sports News",
+  "www.huskers.com",
+  "/rss.dbml?db_oem_id=100&media=news" 
+};
+
+/**
+ * An RSS feed of Reddit's front page.  Be aware: reddit 
+ * forces an SSL connection, so we've been forced to use a 
+ * non-SSL proxy here.  Depending on the fickleness of your
+ * instructor, this may or may not be working.
+ */
+static const RssService reddit = {
+  "Reddit (proxy)",
+  "cse.unl.edu",
+  "/~cbourke/proxies/redditRSS.php"
+};
 
 typedef struct {
   //TODO: define your structure here
-} RSS;
+} Rss;
 
 /* Implement these functions */
-RSS * createEmptyRSS();
-RSS * createRSS(char * title, char * link, char * date, char * description);
-void printRSS(RSS * item);
+Rss * createEmptyRss();
+Rss * createRss(const char * title, const char * link, const char * date, const char * description);
+void printRss(Rss * item);
 
 /* these functions are done for you, do not change them */
-void parseRSS_XML(xmlNode * root_node);
-char * getRSS_XML(const char * hostname, const char * resource);
+void parseRssXml(xmlNode * rootNode);
+char * getRssXml(const char * hostname, const char * resource);
 
 int main(int argc, char **argv)
 {
-  //TODO: uncomment the RSS feed that you wish to use
+  //default: UNL News
+  RssService s = unlNews;
 
-  /*
-  //UNL In the News Channel:
-  char hostname[] = "ucommxsrv1.unl.edu";
-  char resource[] = "/rssfeeds/unlinthenewsrss.xml";
-  */
+  if(argc > 1) {
+    int choice = atoi(argv[1]);
+    if(choice == 2) {
+      s = huskerNews;
+    } else if(choice == 3) {
+      s = reddit;
+    }
+  }
 
-  /*
-  //Nebraska Headline News - Husker Sports
-  char hostname[] = "www.huskers.com";
-  char resource[] = "/rss.dbml?db_oem_id=100&media=news";
-  */
+  printf("Using RSS Service: %s (%s%s)\n", s.name, s.host, s.resource);
 
-  /*
-  //The scarlet - The news source for faculty and staff at the University of Nebraska-Lincoln
-  char hostname[] = "scarlet.unl.edu";
-  char resource[] = "/?feed=rss2";
-  */
+  char *rawXml = getRssXml(s.host, s.resource);
 
-  char *rawXML = getRSS_XML(hostname, resource);
+  xmlDocPtr doc = xmlReadMemory(rawXml, strlen(rawXml), "noname.xml", NULL, 0);
+  xmlNode *rootElement = xmlDocGetRootElement(doc);
 
-  xmlDocPtr doc = xmlReadMemory(rawXML, strlen(rawXML), "noname.xml", NULL, 0);
-  xmlNode *root_element = xmlDocGetRootElement(doc);
-
-  parseRSS_XML(root_element);
+  parseRssXml(rootElement);
 
   xmlCleanupParser();
 }
 
-RSS * createEmptyRSS() {
+Rss * createEmptyRss() {
   //TODO: implement
 }
 
-RSS * createRSS(char * title, char * link, char * date, char * description) {
+Rss * createRss(const char * title, const char * link, const char * dateStr, const char * description) {
   //TODO: implement
 }
 
-void printRSS(RSS * item) {
+void printRss(Rss * item) {
   //TODO: implement
 }
 
-void parseRSS_XML(xmlNode * root_node)
+void parseRssXml(xmlNode * rootNode)
 {
   //we limit the number of items to a maximum of 100
   int n=100;
   int i=0, numItems=0;
-  RSS items[100];
+  Rss items[100];
   xmlNode *cur_node = NULL;
   xmlNode *inner_node = NULL;
-  xmlNode *channel = root_node->children->next;
+  xmlNode *channel = rootNode->children->next;
   
   for(cur_node=channel->children; cur_node; cur_node = cur_node->next) {
     if (cur_node->type == XML_ELEMENT_NODE && strcmp(cur_node->name, "item") == 0) {
 
-      RSS * anRSS = NULL;
+      Rss * anRss = NULL;
 
       char * title = NULL;
       char * link  = NULL;
@@ -103,21 +127,21 @@ void parseRSS_XML(xmlNode * root_node)
           }
         }
       }
-      anRSS = createRSS(title, link, date, description);
+      anRss = createRss(title, link, date, description);
 
       if(numItems < n) {
-	items[numItems] = *anRSS;
+	items[numItems] = *anRss;
 	i++;
         numItems++;
       }
     }
   }
   for(i=0; i<numItems; i++) {
-    printRSS(&items[i]);
+    printRss(&items[i]);
   }
 }
 
-char * getRSS_XML(const char * hostname, const char * resource)
+char * getRssXml(const char * hostname, const char * resource)
 {
   char *rawXML;
   char dir[DIRSIZE];
@@ -171,6 +195,14 @@ char * getRSS_XML(const char * hostname, const char * resource)
   rawXML = (char *) malloc(sizeof(char) * (strlen(strchr(result, '<')) + 1));
   strcpy(rawXML, strchr(result, '<'));
   close(sd);
+
+  //chomp everything after the last >:
+  int i=strlen(rawXML)-1;
+  while(rawXML[i] != '>') {
+    rawXML[i] = '\0';
+    i--;
+  }
+
   return rawXML;
 
 }

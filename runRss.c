@@ -5,13 +5,14 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#include "curl_utils.h"
 #include "rss_utils.h"
 #include "rss.h"
 
 int main(int argc, char **argv)
 {
   //default: UNL News
-  RssService s = unlNews;
+  RssService s = cseBitsAndBytes;
 
   if(argc > 1) {
     int choice = atoi(argv[1]);
@@ -22,9 +23,9 @@ int main(int argc, char **argv)
     }
   }
 
-  printf("Using RSS Service: %s (%s%s)\n", s.name, s.host, s.resource);
+  printf("Using RSS Service: %s (%s)\n", s.name, s.url);
 
-  char *rawXml = getRssXml(s.host, s.resource);
+  char *rawXml = getContent(s.url);
 
   xmlDocPtr doc = xmlReadMemory(rawXml, strlen(rawXml), "noname.xml", NULL, 0);
     xmlNode *rootElement = xmlDocGetRootElement(doc);

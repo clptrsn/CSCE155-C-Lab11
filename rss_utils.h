@@ -1,30 +1,30 @@
 
-#define HTTP_PORT 80
-#define BUFFER_SIZE 50000
-
+/**
+ * Types of supported RSS Feeds
+ */
 typedef enum {
   RSS2,
   ATOM1
 } Version;
 
+/**
+ * Data associated with an RSS Service
+ */
 typedef struct {
   char *name;
-  char *host;
-  char *resource;
-  int type;
+  char *url;
+  Version type;
 } RssService;
 
-static const RssService unlNews = {
-  "UNL News",
-  "newsroom.unl.edu",
-  "/releases/?format=xml",
+static const RssService cseBitsAndBytes = {
+  "CSE Bits and Bytes",
+  "http://newsroom.unl.edu/announce/cse/?format=rss",
   RSS2
 };
 
 static const RssService huskerNews = {
   "Husker Sports News",
-  "www.huskers.com",
-  "/rss.dbml?db_oem_id=100&media=news",
+  "http://www.huskers.com/rss.dbml?db_oem_id=100&media=news",
   RSS2
 };
 
@@ -36,8 +36,7 @@ static const RssService huskerNews = {
  */
 static const RssService reddit = {
   "Reddit (proxy)",
-  "cse.unl.edu",
-  "/~cbourke/proxies/redditRSS.php",
+  "http://cse.unl.edu/~cbourke/proxies/redditRSS.php",
   ATOM1
 };
 
@@ -47,6 +46,6 @@ static const RssService reddit = {
 void parseRssXml(xmlNode * rootNode);
 
 /**
- * A utility function to retrieve RSS or ATOM feed
+ * A utility function to parse an XML feed from an Atom feed
  */
-char * getRssXml(const char * hostname, const char * resource);
+void parseAtomXml(xmlNode * rootNode);

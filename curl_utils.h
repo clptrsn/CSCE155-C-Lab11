@@ -20,4 +20,4 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s);
  * Function returns a string containing the content of the given
  * url.
  */
-char * getContent(const char *url);
+char *getContent(const char *url);

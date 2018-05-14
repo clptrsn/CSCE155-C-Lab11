@@ -1,0 +1,286 @@
+\documentclass[12pt]{scrartcl}
+
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{.25cm}
+
+\usepackage{graphicx}
+
+\usepackage{xcolor}
+
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\usepackage{hyperref}
+\hypersetup{
+  letterpaper,
+  colorlinks,
+  linkcolor=red,
+  citecolor=darkgreen,
+  menucolor=darkred,
+  urlcolor=blue,
+  pdfpagemode=none,
+  pdftitle={Introduction To Git},
+  pdfauthor={Christopher M. Bourke},
+  pdfcreator={$ $Id: cv-us.tex,v 1.28 2009/01/01 00:00:00 cbourke Exp $ $},
+  pdfsubject={PhD Thesis},
+  pdfkeywords={}
+}
+
+\definecolor{MyDarkBlue}{rgb}{0,0.08,0.45}
+\definecolor{MyDarkRed}{rgb}{0.45,0.08,0}
+\definecolor{MyDarkGreen}{rgb}{0.08,0.45,0.08}
+
+\definecolor{mintedBackground}{rgb}{0.95,0.95,0.95}
+\definecolor{mintedInlineBackground}{rgb}{.90,.90,1}
+
+%\usepackage{newfloat}
+\usepackage[newfloat=true]{minted}
+\setminted{mathescape,
+               linenos,
+               autogobble,
+               frame=none,
+               framesep=2mm,
+               framerule=0.4pt,
+               %label=foo,
+               xleftmargin=2em,
+               xrightmargin=0em,
+               startinline=true,  %PHP only, allow it to omit the PHP Tags *** with this option, variables using dollar sign in comments are treated as latex math
+               numbersep=10pt, %gap between line numbers and start of line
+               style=default, %syntax highlighting style, default is "default"
+               			    %gallery: http://help.farbox.com/pygments.html
+			    	    %list available: pygmentize -L styles
+               bgcolor=mintedBackground} %prevents breaking across pages
+               
+\setmintedinline{bgcolor={mintedBackground}}
+\setminted[text]{bgcolor={mintedBackground},linenos=false,autogobble,xleftmargin=1em}
+%\setminted[php]{bgcolor=mintedBackgroundPHP} %startinline=True}
+\SetupFloatingEnvironment{listing}{name=Code Sample}
+\SetupFloatingEnvironment{listing}{listname=List of Code Samples}
+
+
+\title{CSCE 155 - C}
+\subtitle{Lab 11 - Structs}
+\author{Dr.\ Chris Bourke}
+\date{~}
+
+\begin{document}
+
+\maketitle
+
+\section*{Prior to Lab}
+
+Before attending this lab:
+\begin{enumerate}
+  \item Read and familiarize yourself with this handout.
+  \item Review the following free textbook resources:
+	\begin{itemize}
+  	  \item \url{http://en.wikibooks.org/wiki/C_Programming/Complex_types#Structs}
+	  \item \url{http://www.cs.cf.ac.uk/Dave/C/node9.html}
+	\end{itemize}
+  \item For additional Information on some advanced topics:
+  \begin{itemize}
+    \item RSS: \url{http://en.wikipedia.org/wiki/RSS}
+    \item HTTP Protocol: \url{http://en.wikipedia.org/wiki/HTTP}
+    \item C Sockets: \url{http://www.linuxhowtos.org/C_C++/socket.htm}
+  \end{itemize}
+\end{enumerate}
+
+\section*{Peer Programming Pair-Up}
+
+To encourage collaboration and a team environment, labs will be
+structured in a \emph{pair programming} setup.  At the start of
+each lab, you will be randomly paired up with another student 
+(conflicts such as absences will be dealt with by the lab instructor).
+One of you will be designated the \emph{driver} and the other
+the \emph{navigator}.  
+
+The navigator will be responsible for reading the instructions and
+telling the driver what to do next.  The driver will be in charge of the
+keyboard and workstation.  Both driver and navigator are responsible
+for suggesting fixes and solutions together.  Neither the navigator
+nor the driver is ``in charge.''  Beyond your immediate pairing, you
+are encouraged to help and interact and with other pairs in the lab.
+
+Each week you should alternate: if you were a driver last week, 
+be a navigator next, etc.  Resolve any issues (you were both drivers
+last week) within your pair.  Ask the lab instructor to resolve issues
+only when you cannot come to a consensus.  
+
+Because of the peer programming setup of labs, it is absolutely 
+essential that you complete any pre-lab activities and familiarize
+yourself with the handouts prior to coming to lab.  Failure to do
+so will negatively impact your ability to collaborate and work with 
+others which may mean that you will not be able to complete the
+lab.  
+
+\section{Lab Objectives \& Topics}
+At the end of this lab you should be familiar with the following
+\begin{itemize}
+  \item Be familiar with the concepts of encapsulation \& modularity
+  \item Understand how to design, declare, and use C structures 
+  	(both by reference and by value)
+  \item Have some exposure to advanced topics such as sockets, 
+	the HTTP protocol, and XML processing
+\end{itemize}
+
+\section{Background}
+
+An RSS feed (RDF Site Summary or ``Really Simple Syndication'') 
+is a format used to publish frequently updated works.  RSS enabled 
+clients can subscribe to RSS feeds and update a user as to new or 
+relevant news items.  RSS feeds are most commonly formatted using 
+XML (Extensible Markup Language) that use XML tags to indicate 
+what the data represents (the title of the article, a short description, 
+etc.).  Clients ``read'' an RSS feed by making a connection to a server 
+using the HyperText Transfer Protocol (HTTP).
+
+For example, UNL has an RSS news feed available at \url{http://newsroom.unl.edu/releases/?format=xml} 
+which serves XML data that looks something like the following:
+
+\begin{minted}[breaklines]{xml}
+<rss xmlns:media="http://search.yahoo.com/mrss/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+<channel>
+  <title>UNL News Releases</title>
+  <link>http://newsroom.unl.edu/releases/</link>
+  <description>News from the University of Nebraska-Lincoln</description>
+  <language>en-us</language>
+  <copyright>Copyright 2012 University of Nebraska-Lincoln</copyright>
+  <image>
+    <title>UNL News Releases</title>
+    <url>http://www.unl.edu/favicon.ico</url>
+    <link>http://www.unl.edu/</link>
+  </image>
+  <item>
+    <title>Guerrilla Girls on Tour perform 'Feminists are Funny' Monday at Sheldon</title>
+    <link>http://newsroom.unl.edu/releases/2012/03/09/Guerrilla</link>
+    <description>The Guerrilla Girls on Tour, an internationally acclaimed anonymous theater collective, will perform "Feminists are Funny" at the University of Nebraska-Lincoln's Sheldon Museum of Art, 12th and R streets, at 7 p.m. March 12. The 70-minute play is an...
+    </description>
+    <pubDate>Fri, 09 Mar 2012 02:00:00 -0600</pubDate>
+  </item>
+  ...
+  </items>
+</channel>
+\end{minted}
+
+\subsection*{Structures in C}
+
+An entity may be composed of several different pieces of data.  
+A person for example may have a first and last name (strings), 
+an age (integer), a birthdate (some date/time representation), 
+etc.  Its much easier and more natural to group each of these 
+pieces of data into one entity.  This is a concept known as 
+\emph{encapsulation}--a mechanism by which data can be 
+grouped together to define an entity.
+
+The C programming language provides a mechanism to achieve 
+encapsulation using structures.  Structures are user defined types 
+that have one or more data fields--variables which have a type 
+and a name.  To access the member fields of a structure you can 
+use the dot operator; example: \mintinline{c}{student.firstName}.  
+However, when you have a reference to a structure, you need to 
+use the arrow operator: \mintinline{c}{student->firstName}.
+
+\subsection*{RSS Client Background}
+
+You have been provided with an incomplete RSS client written in C.  
+The client works as follows: based on a URL (which consists of a 
+host and a resource on that host), it opens a socket connection and 
+sends a GET request to the server.  The server responds with a 
+stream of data that the client reads into a buffer.  This data stream 
+can, in general, be any type of data, but we're expecting an RSS 
+feed--a stream of plain text XML-formatted data conforming to the 
+RSS standard.  Since the data is plain text, it is stored in a 
+character array which is then handed off to another function 
+to parse the XML document.  This is done using a library (libxml2, 
+an XML parser and toolkit for Gnome).
+
+\section{Activities}
+
+Clone the project code for this lab from GitHub by using the following URL:
+\url{https://github.com/cbourke/CSCE155-C-Lab11}.
+
+\subsection{A Student Structure}
+
+This activity will familiarize you with a completed program in which 
+a C structure has been declared to represent a student.  Several 
+functions have been implemented to assist in the construction and 
+printing of this structure.  In particular there are two ``factory'' 
+functions that can be used to help in the construction of an individual 
+structure.  The factory function takes the appropriate parameters, 
+allocates memory to hold a new student and sets each field of the 
+student appropriately.  In the case of strings, malloc is used to create 
+enough space and the string is then copied.  The birthdate is handled 
+specially: it parses the date string and creates a \mintinline{c}{struct tm} 
+which is a \emph{time} structure defined by the time library 
+(\mintinline{text}{time.h}).  Ultimately, a pointer to the new student 
+structure is returned.  There is also a print function that takes a 
+student (by reference) and prints it out to the standard output.
+
+
+\subsubsection*{Instructions}
+
+\begin{enumerate}
+  \item Examine the syntax and program structure and observe how 
+	each factory function works as well as how they are used.
+  \item Change the values in the \mintinline{c}{main} function to your 
+	name, NUID, and birth date.
+  \item Compile and run the program.  Refer back to this program in 
+	the next activity as needed.
+\end{enumerate}
+	
+\subsection{Completing the RSS Client}
+
+In this activity, you will complete the RSS Client that connects to a UNL 
+RSS feed, processes the XML data and outputs the results to the 
+standard output.  Most of the client has been completed for you.  
+You just need to complete the design and implementation of a C 
+structure that models the essential parts of an RSS item.  Your 
+structure will need to support an RSS item's title, link, description, 
+and publication date.  
+
+As a first attempt you can treat the publication date as a string, 
+but ultimately you should use a \mintinline{c}{tm} structure similar 
+to the \mintinline{c}{Student} example.  This structure has several 
+fields that give you access to the year, month, date, hour, minute, 
+etc.  For full documentation, see the following: \url{http://pubs.opengroup.org/onlinepubs/7908799/xsh/time.h.html}
+
+\subsubsection*{Instructions}
+
+\begin{enumerate}
+  \item We have provided 3 different RSS feeds to work with in the
+    program.  You can switch between them using command line arguments.
+  \item Design and implement the RSS structure 
+  \item Complete the other functions
+  \begin{itemize}
+    \item \mintinline{c}{createEmptyRss()} - this function should create an 
+  	``empty'' RSS structure
+    \item \mintinline{c}{createRss()} - this function should construct an RSS 
+	structure based on the input parameters.  For the date, use a string
+	representation (RSS and Atom feeds can use a variety of formats and
+	there is no easy way to automatically parse them).
+	\item \mintinline{c}{printRss()} - this function should print the given RSS 
+	to the standard output in a human readable format (the details are up to you).  
+  \end{itemize}	
+  \item You will need to use the makefile to compile your program as it 
+	contains the flags necessary to import the proper XML libraries.  
+	Recall that you can execute the makefile by typing the \mintinline{text}{make} 
+	command.
+\end{enumerate}
+
+\section{Advanced Activity (Optional)}
+
+\begin{enumerate}
+  \item You will notice that internally, we have provided support for both
+  RSS 2.0 feeds and Atom 1.0 feeds (Reddit uses Atom for example).  
+  Examine the files where we have defined these feeds.  Find an RSS or Atom
+  feed that is of interest to you and integrate it as an option for this program.
+  Be sure to change the main function so that it can be used.
+  
+  \item Improve the program further by modifying the \mintinline{c}{parseRSS_XML} 
+	function.  Currently, this function parses the XML but limits the number of 
+	RSS structures to a maximum of 100.  Write another function to count the 
+	number of items in the XML and use it to instead dynamically allocate an 
+	RSS array of a size exactly equal to the number of item elements in the XML file.
+\end{enumerate}
+
+\end{document}

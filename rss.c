@@ -1,10 +1,10 @@
-#include<stdlib.h>
-#include<stdio.h>
-#include<string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "rss.h"
 
-//implement these functions
+// implement these functions
 
 Rss * createEmptyRss() {
 }
@@ -14,4 +14,3 @@ Rss * createRss(const char * title, const char * link, const char * date, const 
 
 void printRss(Rss * item) {
 }
-

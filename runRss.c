@@ -1,6 +1,6 @@
-#include<stdlib.h>
-#include<stdio.h>
-#include<string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -9,16 +9,15 @@
 #include "rss_utils.h"
 #include "rss.h"
 
-int main(int argc, char **argv)
-{
-  //default: UNL News
+int main(int argc, char **argv) {
+  // default: UNL News
   RssService s = cseBitsAndBytes;
 
-  if(argc > 1) {
+  if (argc > 1) {
     int choice = atoi(argv[1]);
-    if(choice == 2) {
+    if (choice == 2) {
       s = huskerNews;
-    } else if(choice == 3) {
+    } else if (choice == 3) {
       s = reddit;
     }
   }
@@ -28,11 +27,11 @@ int main(int argc, char **argv)
   char *rawXml = getContent(s.url);
 
   xmlDocPtr doc = xmlReadMemory(rawXml, strlen(rawXml), "noname.xml", NULL, 0);
-    xmlNode *rootElement = xmlDocGetRootElement(doc);
+  xmlNode *rootElement = xmlDocGetRootElement(doc);
 
-  if(s.type == RSS2) {
+  if (s.type == RSS2) {
     parseRssXml(rootElement);
-  } else if(s.type == ATOM1) {
+  } else if (s.type == ATOM1) {
     parseAtomXml(rootElement);
   } else {
     fprintf(stderr, "Undefined Service Type: %d\n", s.type);
@@ -40,4 +39,3 @@ int main(int argc, char **argv)
 
   xmlCleanupParser();
 }
-

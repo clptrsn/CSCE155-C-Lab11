@@ -17,16 +17,12 @@ typedef struct {
 } RssService;
 
 static const RssService cseBitsAndBytes = {
-  "CSE Bits and Bytes",
-  "http://newsroom.unl.edu/announce/cse/?format=rss",
-  RSS2
-};
+    "CSE Bits and Bytes", "http://newsroom.unl.edu/announce/cse/?format=rss",
+    RSS2};
 
 static const RssService huskerNews = {
-  "Husker Sports News",
-  "http://www.huskers.com/rss.dbml?db_oem_id=100&media=news",
-  RSS2
-};
+    "Husker Sports News",
+    "http://www.huskers.com/rss.dbml?db_oem_id=100&media=news", RSS2};
 
 /**
  * An RSS feed of Reddit's front page.  Be aware: reddit
@@ -35,17 +31,15 @@ static const RssService huskerNews = {
  * instructor, this may or may not be working.
  */
 static const RssService reddit = {
-  "Reddit (proxy)",
-  "http://cse.unl.edu/~cbourke/proxies/redditRSS.php",
-  ATOM1
-};
+    "Reddit (proxy)", "http://cse.unl.edu/~cbourke/proxies/redditRSS.php",
+    ATOM1};
 
 /**
  * A utility function to parse an XML feed from an RSS feed
  */
-void parseRssXml(xmlNode * rootNode);
+void parseRssXml(xmlNode *rootNode);
 
 /**
  * A utility function to parse an XML feed from an Atom feed
  */
-void parseAtomXml(xmlNode * rootNode);
+void parseAtomXml(xmlNode *rootNode);

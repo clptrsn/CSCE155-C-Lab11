@@ -17,7 +17,7 @@ typedef struct {
 } RssService;
 
 static const RssService cseBitsAndBytes = {
-    "CSE Bits and Bytes", "http://newsroom.unl.edu/announce/cse/?format=rss",
+    "CSE Bits and Bytes", "https://newsroom.unl.edu/announce/cse/?format=rss",
     RSS2};
 
 static const RssService huskerNews = {

@@ -31,7 +31,7 @@ static const RssService huskerNews = {
  * instructor, this may or may not be working.
  */
 static const RssService reddit = {
-    "Reddit (proxy)", "http://cse.unl.edu/~cbourke/proxies/redditRSS.php",
+  "Reddit", "https://www.reddit.com/.rss",
     ATOM1};
 
 /**

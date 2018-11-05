@@ -1,6 +1,6 @@
 
 # compile with gcc
-CC = gcc
+CC = gcc -Wall
 
 # XML libraries
 XML_INCLUDE = -I/usr/include/libxml2

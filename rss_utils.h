@@ -22,7 +22,7 @@ static const RssService cseBitsAndBytes = {
 
 static const RssService huskerNews = {
     "Husker Sports News",
-    "http://www.huskers.com/rss.dbml?db_oem_id=100&media=news", RSS2};
+    "https://huskers.com/rss.aspx", RSS2};
 
 /**
  * An RSS feed of Reddit's front page.  Be aware: reddit

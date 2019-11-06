@@ -77,7 +77,6 @@ void parseAtomXml(xmlNode *rootNode) {
   for (cur_node = rootNode->children; cur_node; cur_node = cur_node->next) {
     if (cur_node->type == XML_ELEMENT_NODE &&
         strcmp(cur_node->name, "entry") == 0) {
-      Rss *anRss = NULL;
 
       char *title = NULL;
       char *link = NULL;

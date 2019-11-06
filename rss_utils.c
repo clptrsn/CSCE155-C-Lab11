@@ -19,7 +19,12 @@ void parseRssXml(xmlNode *rootNode) {
   Rss items[100];
   xmlNode *cur_node = NULL;
   xmlNode *inner_node = NULL;
-  xmlNode *channel = rootNode->children->next;
+  xmlNode *channel = NULL;
+  if(rootNode->children->next != NULL) {
+    channel = rootNode->children->next;
+  } else {
+    channel = rootNode->last;
+  }
 
   for (cur_node = channel->children; cur_node; cur_node = cur_node->next) {
     if (cur_node->type == XML_ELEMENT_NODE &&

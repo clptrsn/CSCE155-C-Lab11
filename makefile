@@ -13,7 +13,7 @@ runRss: runRss.c rss_utils.o rss.o curl_utils.o
 	$(CC) $(XML_INCLUDE) -o runRss runRss.c curl_utils.o rss_utils.o rss.o $(XML_LIB) $(CURL_LIB)
 
 rss_utils.o: rss_utils.c rss_utils.h
-	$(CC) $(XML_INCLUDE) -c -o rss_utils.o rss_utils.c $(XML_LIB)
+	$(CC) -Wno-pointer-sign $(XML_INCLUDE) -c -o rss_utils.o rss_utils.c $(XML_LIB)
 
 rss.o: rss.c rss.h
 	$(CC) -c -o rss.o rss.c
